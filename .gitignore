@@ -1,5 +1,5 @@
 # Build output
-dist/
+# dist/ directory removed to include build output in the repository
 
 # Node modules folder
 node_modules/
