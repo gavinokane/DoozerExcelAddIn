@@ -1,0 +1,2 @@
+Office.onReady((function(){})),Office.actions.associate("action",(function(e){Office.context.mailbox.item.notificationMessages.addAsync("helloWorld",{type:"informationalMessage",message:"Hello World",icon:"icon-16",persistent:!1}),e.completed()}));
+//# sourceMappingURL=commands.js.map
