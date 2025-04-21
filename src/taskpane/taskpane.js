@@ -387,22 +387,24 @@ function fetchWorkerList(subscriptionKey, apiKey) {
         .then((result) => {
             const dropdown = document.getElementById("worker-dropdown");
             dropdown.innerHTML = ""; // Clear existing options
-
+        
+            AddtoLog("Debug: Worker list response - " + JSON.stringify(result.workers));
+        
             if (result && Array.isArray(result.workers)) {
                 result.workers.forEach((worker) => {
                     const option = document.createElement("div");
                     option.className = "dropdown-item";
                     option.onclick = () => displayAgentInfo(worker);
-
+        
                     const img = document.createElement("img");
                     img.src = worker.Picture;
                     img.alt = worker.Name;
                     img.className = "agent-picture";
-
+        
                     const name = document.createElement("span");
                     name.textContent = worker.Name;
                     name.className = "agent-name";
-
+        
                     option.appendChild(img);
                     option.appendChild(name);
                     dropdown.appendChild(option);
