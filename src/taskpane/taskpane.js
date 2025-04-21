@@ -545,6 +545,9 @@ export async function SubmitToAgent() {
         AddtoLog("Error: No worker selected. Please select a worker from the dropdown.");
         return;
       }
+      
+      // Get the run button element
+      const runButton = document.getElementById("run");
       runButton.textContent = "Processing...";
       const spinner = document.createElement("span");
       spinner.className = "spinner";
