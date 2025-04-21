@@ -390,9 +390,21 @@ function fetchWorkerList(subscriptionKey, apiKey) {
 
             if (result && Array.isArray(result.workers)) {
                 result.workers.forEach((worker) => {
-                    const option = document.createElement("option");
-                    option.value = worker.WorkerID;
-                    option.textContent = worker.Name;
+                    const option = document.createElement("div");
+                    option.className = "dropdown-item";
+                    option.onclick = () => displayAgentInfo(worker);
+
+                    const img = document.createElement("img");
+                    img.src = worker.Picture;
+                    img.alt = worker.Name;
+                    img.className = "agent-picture";
+
+                    const name = document.createElement("span");
+                    name.textContent = worker.Name;
+                    name.className = "agent-name";
+
+                    option.appendChild(img);
+                    option.appendChild(name);
                     dropdown.appendChild(option);
                 });
             } else {
@@ -410,6 +422,42 @@ function fetchWorkerList(subscriptionKey, apiKey) {
         .catch((error) => {
             AddtoLog(`Error fetching worker list: ${error.message}`);
         });
+}
+
+function displayAgentInfo(agent) {
+    const infoSection = document.getElementById("agent-info");
+    infoSection.innerHTML = ""; // Clear existing content
+
+    const img = document.createElement("img");
+    img.src = agent.Picture;
+    img.alt = agent.Name;
+    img.className = "agent-picture-large";
+
+    const name = document.createElement("h2");
+    name.textContent = agent.Name;
+
+    const role = document.createElement("p");
+    role.textContent = `Role: ${agent.Role}`;
+
+    const description = document.createElement("p");
+    description.textContent = `Description: ${agent.Description}`;
+
+    const traits = document.createElement("p");
+    traits.textContent = `Traits: ${agent.Traits}`;
+
+    const skills = document.createElement("p");
+    skills.textContent = `Skills: ${agent.Skills}`;
+
+    const email = document.createElement("p");
+    email.textContent = `Email: ${agent.Email}`;
+
+    infoSection.appendChild(img);
+    infoSection.appendChild(name);
+    infoSection.appendChild(role);
+    infoSection.appendChild(description);
+    infoSection.appendChild(traits);
+    infoSection.appendChild(skills);
+    infoSection.appendChild(email);
 }
 
 function clearLog() {
