@@ -502,7 +502,7 @@ export async function SubmitToAgent() {
         const prompt = document.getElementById("prompt").value;
 
         AddtoLog(prompt);
-        // Get the selected agent name from the dropdown
+        // Get the selected agent name from the dropdown list
         const workerDropdown = document.getElementById("worker-dropdown");
         const selectedAgentName = workerDropdown.options[workerDropdown.selectedIndex].textContent;
 
