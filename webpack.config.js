@@ -73,6 +73,10 @@ module.exports = async (env, options) => {
               }
             },
           },
+          {
+            from: "index.html",
+            to: "index.html",
+          },
         ],
       }),
       new HtmlWebpackPlugin({
