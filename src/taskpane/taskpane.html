@@ -72,24 +72,28 @@
     <button id="login-button" class="ms-Button ms-Button--primary" style="padding: 10px 20px; font-size: 1.1em; margin-top: 10px;">Login</button>
   </div>
 </div>
-<div id="worker-section" style="margin-bottom: 20px;">
-  <label for="worker-dropdown" class="ms-font-s" style="margin-bottom: 10px;">Agent:&nbsp;</label>
-  <select id="worker-dropdown" class="ms-TextField" style="padding: 10px; font-size: 1.1em; width: 80%; margin-bottom: 10px;"></select>
-  <button id="logout-button" class="ms-Button ms-Button--secondary" style="padding: 5px 10px; font-size: 0.9em; position: absolute; bottom: 10px; right: 10px;">Logout</button>
-</div>
-<input type="text" id="prompt" placeholder="Optional guidance" class="ms-TextField" style="padding: 10px; font-size: 1.1em; width: 80%; margin-bottom: 10px;">
-<br>
-<br><button id="run" class="modern-button">Submit to Agent</button>
 
-<p><label id="item-subject"></label></p>
+<div id="worker-section" style="margin-bottom: 15px;">
+  <label for="worker-dropdown" class="ms-font-s" style="display: block; margin-bottom: 5px;">Agent:</label>
+  <select id="worker-dropdown" class="ms-TextField" style="padding: 8px; font-size: 1em; width: 90%; margin-bottom: 10px;"></select>
+</div>
+
+<div id="agent-info" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; display: none; max-height: 200px; overflow-y: auto;"></div>
+
+<div style="margin-bottom: 15px;">
+  <label for="prompt" class="ms-font-s" style="display: block; margin-bottom: 5px;">Guidance:</label>
+  <input type="text" id="prompt" placeholder="Optional guidance" class="ms-TextField" style="padding: 8px; font-size: 1em; width: 90%; margin-bottom: 10px;">
+</div>
+
+<button id="run" class="modern-button" style="width: 90%; margin-bottom: 15px;">Submit to Agent</button>
 
 <div id="form-filler">
-<div id="progress-container">
-<progress id="progress-bar" value="0" max="100" style="width: 100%; margin-top: 10px;"></progress>
+  <div id="progress-container">
+    <progress id="progress-bar" value="0" max="100" style="width: 100%; margin: 10px 0;"></progress>
+  </div>
 </div>
 
-<br><br>
-</div>
+<button id="logout-button" class="ms-Button ms-Button--secondary" style="padding: 5px 10px; font-size: 0.9em; position: absolute; bottom: 10px; right: 10px;">Logout</button>
 
 <div style="margin-top: 20px;">
     <label style="display: flex; align-items: center; cursor: pointer;">

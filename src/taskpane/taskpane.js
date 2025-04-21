@@ -387,29 +387,100 @@ function fetchWorkerList(subscriptionKey, apiKey) {
         .then((result) => {
             const dropdown = document.getElementById("worker-dropdown");
             dropdown.innerHTML = ""; // Clear existing options
-
+            
+            AddtoLog("Debug: Worker list response - " + JSON.stringify(result.workers));
+            
             if (result && Array.isArray(result.workers)) {
                 result.workers.forEach((worker) => {
                     const option = document.createElement("option");
                     option.value = worker.WorkerID;
-                    option.textContent = worker.Name;
+                    option.textContent = `${worker.Name}`;
+                    option.setAttribute("data-picture", worker.Picture);
                     dropdown.appendChild(option);
+                });
+                
+                dropdown.addEventListener("change", (event) => {
+                    const selectedWorker = result.workers.find(worker => worker.WorkerID == event.target.value);
+                    if (selectedWorker) {
+                        displayAgentInfo(selectedWorker);
+                    }
                 });
             } else {
                 AddtoLog("Error: Worker list is not properly structured. Response: " + JSON.stringify(result));
             }
-
+            
             document.getElementById("worker-section").style.display = "flex";
             document.getElementById("run").disabled = false;
-
+            
             // Hide login section after successful login
             document.getElementById("login-frame").style.display = "none";
-
+            
             AddtoLog("Worker list fetched successfully.");
         })
         .catch((error) => {
             AddtoLog(`Error fetching worker list: ${error.message}`);
         });
+}
+
+function displayAgentInfo(agent) {
+    // Create agent-info section if it doesn't exist
+    let infoSection = document.getElementById("agent-info");
+    if (!infoSection) {
+        infoSection = document.createElement("div");
+        infoSection.id = "agent-info";
+        infoSection.style.marginTop = "20px";
+        infoSection.style.padding = "10px";
+        infoSection.style.border = "1px solid #ccc";
+        infoSection.style.borderRadius = "5px";
+        document.getElementById("app-body").appendChild(infoSection);
+    }
+    
+    infoSection.innerHTML = ""; // Clear existing content
+
+    const img = document.createElement("img");
+    img.src = agent.Picture;
+    img.alt = agent.Name;
+    img.className = "agent-picture-large";
+    img.style.width = "150px";
+    img.style.height = "150px";
+    img.style.borderRadius = "50%";
+    img.style.display = "block";
+    img.style.margin = "0 auto 15px auto";
+
+    const name = document.createElement("h2");
+    name.textContent = agent.Name;
+    name.style.textAlign = "center";
+    name.style.margin = "10px 0";
+    name.style.color = "#333";
+
+    const role = document.createElement("p");
+    role.textContent = `Role: ${agent.Role}`;
+    role.style.fontWeight = "bold";
+    role.style.margin = "5px 0";
+
+    const description = document.createElement("p");
+    description.textContent = `Description: ${agent.Description}`;
+    description.style.margin = "5px 0";
+
+    const traits = document.createElement("p");
+    traits.textContent = `Traits: ${agent.Traits}`;
+    traits.style.margin = "5px 0";
+
+    const skills = document.createElement("p");
+    skills.textContent = `Skills: ${agent.Skills}`;
+    skills.style.margin = "5px 0";
+
+    const email = document.createElement("p");
+    email.textContent = `Email: ${agent.Email}`;
+    email.style.margin = "5px 0";
+
+    infoSection.appendChild(img);
+    infoSection.appendChild(name);
+    infoSection.appendChild(role);
+    infoSection.appendChild(description);
+    infoSection.appendChild(traits);
+    infoSection.appendChild(skills);
+    infoSection.appendChild(email);
 }
 
 function clearLog() {
@@ -463,14 +534,15 @@ export async function SubmitToAgent() {
       if (addressMatch && addressMatch[1]) {
         sheetName = addressMatch[1];
       } else {
-        sheetName = context.workbook.getActiveWorksheet().name;
-        await context.sync();
+        AddtoLog("Error: Could not extract sheet name from range address.");
+        return;
       }
 
-      // Provide visual feedback on the button
-      const runButton = document.getElementById("run");
-      if (!runButton) {
-        AddtoLog("Error: Run button not found.");
+      // Get the selected worker
+      const workerDropdown = document.getElementById("worker-dropdown");
+      const selectedWorkerId = workerDropdown.value;
+      if (!selectedWorkerId) {
+        AddtoLog("Error: No worker selected. Please select a worker from the dropdown.");
         return;
       }
       runButton.textContent = "Processing...";
@@ -526,46 +598,35 @@ export async function SubmitToAgent() {
         const response = await fetch("https://fn-doozer-py-05.azurewebsites.net/api/Queue", {
           method: "POST",
           headers: {
+            "Content-Type": "application/json",
             "Ocp-Apim-Subscription-Key": localStorage.getItem("subscriptionKey"),
-            "API_KEY": localStorage.getItem("apiKey"),
+            "API_KEY": localStorage.getItem("apiKey")
           },
-          body: payloadString,
+          body: JSON.stringify(payload)
         });
 
-        progressBar.value = 10;
-
         if (!response.ok) {
-          throw new Error(`Fetch failed with status: ${response.status} - ${response.statusText}`);
+          throw new Error(`Failed to queue task. Status: ${response.status}`);
         }
 
-        const responseText = await response.text();
-        try {
-          const responseData = JSON.parse(responseText);
-          AddtoLog(`Adding Instance ID: ${responseData.instance_id}`);
+        const result = await response.json();
+        const instance_id = result.instance_id;
 
-          data_dictionary[range.address] = {
-            status: "pending",
-            instance_id: responseData.instance_id,
-            columnIndex: range.columnIndex,
-            rowIndex: range.rowIndex,
-            sheetName: sheetName,
-          };
-        } catch (parseError) {
-          AddtoLog(`Error parsing response: ${parseError.message}`);
-        }
+        // Store the instance ID and range info in the data dictionary
+        data_dictionary[range.address] = {
+          status: "pending",
+          instance_id: instance_id,
+          columnIndex: range.columnIndex,
+          rowIndex: range.rowIndex,
+          sheetName: sheetName
+        };
+
+        AddtoLog(`Task queued successfully. Instance ID: ${instance_id}`);
       } catch (error) {
-        AddtoLog(`Error during WebService submission: ${error.message}`);
-      } finally {
-        runButton.textContent = "Submit to Agent";
-        runButton.disabled = false;
-        const spinner = runButton.querySelector(".spinner");
-        if (spinner) {
-          runButton.removeChild(spinner);
-        }
+        AddtoLog(`Error: Failed to queue task. Details: ${error.message}`);
       }
     });
   } catch (error) {
-    AddtoLog(`Error in SubmitToAgent: ${error.message}`);
-    console.error("Error in SubmitToAgent:", error);
+    AddtoLog(`Error: ${error.message}`);
   }
 }
