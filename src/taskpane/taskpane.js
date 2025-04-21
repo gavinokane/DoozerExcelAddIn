@@ -367,46 +367,49 @@ document.getElementById("api-key").value = "";
 }
 
 function fetchWorkerList(subscriptionKey, apiKey) {
-  const myHeaders = new Headers();
-  myHeaders.append("Ocp-Apim-Subscription-Key", subscriptionKey);
-  myHeaders.append("API_KEY", apiKey);
+    const myHeaders = new Headers();
+    myHeaders.append("Ocp-Apim-Subscription-Key", subscriptionKey);
+    myHeaders.append("API_KEY", apiKey);
 
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow"
-  };
+    const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+    };
 
-  fetch("https://fn-doozer-py-05.azurewebsites.net/api/worker?view_type=lite", requestOptions)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch worker list. Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((result) => {
-      const dropdown = document.getElementById("worker-dropdown");
-      dropdown.innerHTML = ""; // Clear existing options
+    fetch("https://fn-doozer-py-05.azurewebsites.net/api/worker?view_type=lite", requestOptions)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch worker list. Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((result) => {
+            const dropdown = document.getElementById("worker-dropdown");
+            dropdown.innerHTML = ""; // Clear existing options
 
-      if (result && Array.isArray(result.workers)) {
-        result.workers.forEach((worker) => {
-          const option = document.createElement("option");
-          option.value = worker.WorkerID;
-          option.textContent = worker.Name;
-          dropdown.appendChild(option);
+            if (result && Array.isArray(result.workers)) {
+                result.workers.forEach((worker) => {
+                    const option = document.createElement("option");
+                    option.value = worker.WorkerID;
+                    option.textContent = worker.Name;
+                    dropdown.appendChild(option);
+                });
+            } else {
+                AddtoLog("Error: Worker list is not properly structured. Response: " + JSON.stringify(result));
+            }
+
+            document.getElementById("worker-section").style.display = "flex";
+            document.getElementById("run").disabled = false;
+
+            // Hide login section after successful login
+            document.getElementById("login-frame").style.display = "none";
+
+            AddtoLog("Worker list fetched successfully.");
+        })
+        .catch((error) => {
+            AddtoLog(`Error fetching worker list: ${error.message}`);
         });
-      } else {
-        AddtoLog("Error: Worker list is not properly structured. Response: " + JSON.stringify(result));
-      }
-
-      document.getElementById("worker-section").style.display = "flex";
-      document.getElementById("run").disabled = false;
-     
-      AddtoLog("Worker list fetched successfully.");
-    })
-    .catch((error) => {
-      AddtoLog(`Error fetching worker list: ${error.message}`);
-    });
 }
 
 function clearLog() {
