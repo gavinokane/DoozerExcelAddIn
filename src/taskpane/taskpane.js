@@ -625,11 +625,41 @@ export async function SubmitToAgent() {
         };
 
         AddtoLog(`Task queued successfully. Instance ID: ${instance_id}`);
+        
+        // Re-enable the run button after successful submission
+        runButton.textContent = "Submit to Agent";
+        runButton.disabled = false;
+        // Remove the spinner if it exists
+        const spinner = runButton.querySelector(".spinner");
+        if (spinner) {
+          runButton.removeChild(spinner);
+        }
       } catch (error) {
         AddtoLog(`Error: Failed to queue task. Details: ${error.message}`);
+        
+        // Re-enable the run button after error
+        runButton.textContent = "Submit to Agent";
+        runButton.disabled = false;
+        // Remove the spinner if it exists
+        const spinner = runButton.querySelector(".spinner");
+        if (spinner) {
+          runButton.removeChild(spinner);
+        }
       }
     });
   } catch (error) {
     AddtoLog(`Error: ${error.message}`);
+    
+    // Re-enable the run button in case of outer-level errors
+    const runButton = document.getElementById("run");
+    if (runButton) {
+      runButton.textContent = "Submit to Agent";
+      runButton.disabled = false;
+      // Remove the spinner if it exists
+      const spinner = runButton.querySelector(".spinner");
+      if (spinner) {
+        runButton.removeChild(spinner);
+      }
+    }
   }
 }
