@@ -502,11 +502,15 @@ export async function SubmitToAgent() {
         const prompt = document.getElementById("prompt").value;
 
         AddtoLog(prompt);
+        // Get the selected agent name from the dropdown
+        const workerDropdown = document.getElementById("worker-dropdown");
+        const selectedAgentName = workerDropdown.options[workerDropdown.selectedIndex].textContent;
+
         // Prepare the payload for the WebService
         const payload = {
           workflow_short_name: "Agent Submit Excel",
           callback_url: "",
-          doozer_name: "Alex",
+          doozer_name: selectedAgentName,
           variables: [
             {
               excelName: "None",
