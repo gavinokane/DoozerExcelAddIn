@@ -46,11 +46,59 @@ body {
 .hidden {
     display: none !important;
 }
+
+/* Agent dropdown and info styling */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+.agent-picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.agent-name {
+    font-size: 14px;
+    color: #333;
+}
+
+.agent-picture-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: block;
+    margin: 0 auto;
+}
+
+#agent-info {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+}
+
+#agent-info h2 {
+    font-size: 24px;
+    color: #333;
+    margin: 10px 0;
+}
+
+#agent-info p {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0;
+    text-align: left;
+}
  
- ul {
-     margin: 0;
-     padding: 0;
- }
+ul {
+    margin: 0;
+    padding: 0;
+}
  
 .ms-welcome__header {
     padding: 20px;
